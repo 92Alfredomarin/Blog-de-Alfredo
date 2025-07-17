@@ -48,3 +48,23 @@ footer {
   color: #777;
   margin-top: 2rem;
 }
+
+/* Responsividad para móviles */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  nav a {
+    display: block;
+    margin: 0.5rem 0;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  article {
+    padding: 1rem;
+  }
+}
