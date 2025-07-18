@@ -35,3 +35,5 @@ document.addEventListener("DOMContentLoaded", function () {
     observer.observe(el);
   });
 });
+
+div.innerHTML = `<p>${post.texto}</p><small>${fecha}</small><hr>`;
