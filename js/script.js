@@ -90,4 +90,51 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
     });
   });
 
-div.innerHTML = `<p>${post.texto}</p><small>${fecha}</small><hr>`;
+div.innerHTML = `
+  <p>${post.texto}</p>
+  <small>${fecha}</small>
+  <div class="comentarios" id="comentarios-${doc.id}"></div>
+  <input type="text" id="input-${doc.id}" placeholder="Escribe un comentario..." />
+  <button onclick="comentar('${doc.id}')">Comentar</button>
+  <hr>
+`;
+feed.appendChild(div);
+escucharComentarios(doc.id);
+
+import {
+  doc,
+  addDoc,
+  collection as subCollection,
+  onSnapshot as onSubSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+window.comentar = async (postId) => {
+  const input = document.getElementById(`input-${postId}`);
+  const texto = input.value.trim();
+  if (texto === "") return;
+
+  const ref = doc(db, "publicaciones", postId);
+  await addDoc(subCollection(ref, "comentarios"), {
+    texto,
+    fecha: serverTimestamp()
+  });
+
+  input.value = "";
+};
+
+function escucharComentarios(postId) {
+  const ref = doc(db, "publicaciones", postId);
+  const comentariosDiv = document.getElementById(`comentarios-${postId}`);
+  const q = query(subCollection(ref, "comentarios"), orderBy("fecha", "asc"));
+
+  onSubSnapshot(q, (snapshot) => {
+    comentariosDiv.innerHTML = "";
+    snapshot.forEach((comentario) => {
+      const c = comentario.data();
+      const fecha = c.fecha?.toDate().toLocaleString() || "";
+      const p = document.createElement("p");
+      p.innerHTML = `<strong>💬</strong> ${c.texto} <small>${fecha}</small>`;
+      comentariosDiv.appendChild(p);
+    });
+  });
+}
