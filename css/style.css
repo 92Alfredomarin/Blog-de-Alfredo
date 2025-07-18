@@ -260,3 +260,12 @@ footer p {
   margin-bottom: 10px;
   border-radius: 8px;
 }
+
+.comentarios p {
+  margin-left: 15px;
+  font-size: 0.9rem;
+  background: #fff;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
