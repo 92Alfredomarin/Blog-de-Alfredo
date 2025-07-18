@@ -11,6 +11,63 @@
   💬 WhatsApp
 </a>
 <script src="js/script.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyANQJz8F4mZcivSLEoMNx_clHQcws1Knac",
+    authDomain: "blog-de-alfredo.firebaseapp.com",
+    projectId: "blog-de-alfredo",
+    storageBucket: "blog-de-alfredo.firebasestorage.app",
+    messagingSenderId: "682940841797",
+    appId: "1:682940841797:web:cae9f58d444c3bf6c2082c",
+    measurementId: "G-H1NQZGFJ9H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const postText = document.getElementById("postText");
+  const feed = document.getElementById("feed");
+
+  // Función para publicar en Firestore
+  window.publicar = async () => {
+    const texto = postText.value.trim();
+    if (texto === "") return;
+
+    await addDoc(collection(db, "publicaciones"), {
+      texto,
+      fecha: serverTimestamp()
+    });
+
+    postText.value = "";
+  };
+
+  // Escuchar publicaciones en tiempo real
+  const q = query(collection(db, "publicaciones"), orderBy("fecha", "desc"));
+  onSnapshot(q, (snapshot) => {
+    feed.innerHTML = "";
+    snapshot.forEach(doc => {
+      const post = doc.data();
+      const div = document.createElement("div");
+      div.className = "post";
+      const fecha = post.fecha?.toDate().toLocaleString() || "Fecha desconocida";
+      div.innerHTML = `<p>${post.texto}</p><small>${fecha}</small><hr>`;
+      feed.appendChild(div);
+    });
+  });
+</script>
+
 <body>
   <header>
     <h1>Blog de Alfredo</h1>
